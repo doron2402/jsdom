@@ -181,3 +181,15 @@ exports["virtualConsole logs messages from child windows"] = function (t) {
     t.done();
   };
 };
+
+exports["not implemented messages show up as jsdomErrors in the virtual console"] = function (t) {
+  const virtualConsole = jsdom.createVirtualConsole();
+  virtualConsole.on("jsdomError", function (error) {
+    t.ok(error instanceof Error);
+    t.equal(error.message, "Not implemented: window.alert");
+    t.done();
+  });
+
+  const doc = jsdom.jsdom("", { virtualConsole });
+  doc.defaultView.alert();
+};
